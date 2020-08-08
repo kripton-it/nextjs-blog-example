@@ -1,3 +1,4 @@
+import { GetStaticProps, GetStaticPaths } from 'next'
 import Head from 'next/head'
 
 import Date from '../../components/date'
@@ -5,18 +6,31 @@ import Layout from '../../components/layout'
 import { getAllPostIds, getPostData  } from '../../lib/posts'
 import utilStyles from '../../styles/utils.module.css'
 
-export default function Post({ postData }) {
+interface IPostData {
+  contentHtml: string
+  date: string
+  title: string
+}
+
+interface IPostProps {
+  postData: IPostData
+}
+
+export default function Post(props: IPostProps) {
+  const { postData } = props
+  const { contentHtml, date, title } = postData
+
   return (
     <Layout>
       <Head>
-        <title>{postData.title}</title>
+        <title>{title}</title>
       </Head>
       <article>
-        <h1 className={utilStyles.headingXl}>{postData.title}</h1>
+        <h1 className={utilStyles.headingXl}>{title}</h1>
         <div className={utilStyles.lightText}>
-          <Date dateString={postData.date} />
+          <Date dateString={date} />
         </div>
-        <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
+        <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
       </article>
     </Layout>
   )
@@ -29,13 +43,13 @@ If fallback is false, then any paths not returned by getStaticPaths will result 
 https://nextjs.org/docs/basic-features/data-fetching#fallback-pages
 https://nextjs.org/docs/routing/dynamic-routes
 */
-export const getStaticPaths = async () => ({
+export const getStaticPaths: GetStaticPaths = async () => ({
   paths: getAllPostIds(),
   fallback: false
 })
 
-export const getStaticProps = async ({ params }) => ({
+export const getStaticProps: GetStaticProps = async ({ params }) => ({
   props: {
-    postData: await getPostData(params.id)
+    postData: await getPostData(params.id as string)
   }
 })
