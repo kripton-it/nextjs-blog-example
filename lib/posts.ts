@@ -6,7 +6,26 @@ import html from 'remark-html'
 
 const postsDirectory = path.join(process.cwd(), 'posts')
 
-export function getSortedPostsData() {
+interface IParams {
+  params: {
+    id: string
+  }
+}
+
+interface IData {
+  date: string
+  title: string
+}
+
+interface IPostData extends IData {
+  id: string
+}
+
+interface IPostWithContentData extends IPostData {
+  contentHtml: string
+}
+
+export function getSortedPostsData(): IPostData[] {
   // Get file names under /posts
   const fileNames = fs.readdirSync(postsDirectory)
   const allPostsData = fileNames.map(fileName => {
@@ -23,7 +42,7 @@ export function getSortedPostsData() {
     // Combine the data with the id
     return {
       id,
-      ...matterResult.data
+      ...(matterResult.data as IData)
     }
   })
   // Sort posts by date
@@ -56,7 +75,7 @@ export async function getSortedPostsData() {
   return databaseClient.query('SELECT posts...')
 } */
 
-export function getAllPostIds() {
+export function getAllPostIds(): IParams[] {
   const fileNames = fs.readdirSync(postsDirectory)
 
   // Returns an array that looks like this:
@@ -115,7 +134,7 @@ export async function getAllPostIds() {
   })
 } */
 
-export const getPostData = async (id) => {
+export const getPostData = async (id: string): Promise<IPostWithContentData> => {
   const fullPath = path.join(postsDirectory, `${id}.md`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
 
@@ -132,6 +151,6 @@ export const getPostData = async (id) => {
   return {
     id,
     contentHtml,
-    ...matterResult.data
+    ...(matterResult.data as IData)
   }
 }

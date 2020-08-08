@@ -1,3 +1,4 @@
+import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 
@@ -8,7 +9,19 @@ import { getSortedPostsData } from '../lib/posts'
 
 import utilStyles from '../styles/utils.module.css'
 
-export default function Home({ allPostsData }) {
+interface IPostsData {
+  date: string
+  id: string
+  title: string
+}
+
+interface IHomeProps {
+  allPostsData: IPostsData[]
+}
+
+export default function Home(props: IHomeProps) {
+  const { allPostsData } = props
+
   return (
     <Layout home>
       <Head>
@@ -50,7 +63,7 @@ you won’t be able to use data that’s only available
 during request time, such as query parameters or HTTP headers
 */
 // can only be exported from a page
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const allPostsData = getSortedPostsData()
   return {
     props: {

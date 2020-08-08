@@ -7,7 +7,12 @@ import utilStyles from '../styles/utils.module.css'
 const name = 'KriptonIT'
 export const siteTitle = 'Next.js Sample Website'
 
-export default function Layout({ children, home }) {
+interface ILayoutProps {
+  children: React.ReactNode
+  home?: boolean
+}
+
+export default function Layout({ children, home }: ILayoutProps) {
   return (
     <div className={styles.container}>
       <Head>
